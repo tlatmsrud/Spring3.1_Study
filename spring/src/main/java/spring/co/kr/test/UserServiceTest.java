@@ -2,17 +2,16 @@ package spring.co.kr.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,7 +23,6 @@ import spring.co.kr.dao.User;
 import spring.co.kr.dao.UserDaoJdbc;
 import spring.co.kr.domain.Level;
 import spring.co.kr.exception.TestUserServiceException;
-import spring.co.kr.proxy.TransactionHandler;
 import spring.co.kr.service.MockMailSender;
 import spring.co.kr.service.TestUserService;
 import spring.co.kr.service.UserServiceImpl;
@@ -51,14 +49,16 @@ public class UserServiceTest {
 	@Autowired
 	PlatformTransactionManager transactionManager;
 	
+	@Autowired
+	ApplicationContext context;
 	@Before
 	public void setUp() {
 
 		users = Arrays.asList(
 				new User("sskssk","승경","p2",Level.BASIC,29,0,"tlatmsrud@naver.com"),
-				new User("sskssk1","승경","p2",Level.SILVER,50,0,"tlatmsrud@naver.com"),
+				new User("sskssk1","승경","p2",Level.BASIC,50,0,"tlatmsrud@naver.com"),
 				new User("sskssk2","승경","p2",Level.SILVER,60,10-1,"tlatmsrud@naver.com"),
-				new User("sskssk3","승경","p2",Level.GOLD,60,30,"tlatmsrud@naver.com"),
+				new User("sskssk3","승경","p2",Level.SILVER,60,30,"tlatmsrud@naver.com"),
 				new User("sskssk4","승경","p2",Level.GOLD,100,Integer.MAX_VALUE,"tlatmsrud@naver.com")
 		);
 	}
@@ -130,16 +130,11 @@ public class UserServiceTest {
 		testUserService.setUserDao(userDao);
 		testUserService.setMailSender(mailSender);
 		
-		TransactionHandler txHandler = new TransactionHandler();
-		txHandler.setTarget(testUserService);
-		txHandler.setTransactionManager(transactionManager);
-		txHandler.setPattern("upgradeLevels");
-		
-		UserService txUserService = (UserService)Proxy.newProxyInstance(
-				getClass().getClassLoader(), 
-				new Class[] {UserService.class}, 
-				txHandler);
+		ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
 
+		txProxyFactoryBean.setTarget(testUserService);
+		UserService txUserService = (UserService)txProxyFactoryBean.getObject();
+		
 		for(User user : users) userDao.add(user);
 		
 		try {
@@ -148,7 +143,7 @@ public class UserServiceTest {
 			System.out.println(e.getMessage());
 		}
 		
-		checkLevelUpgraded(users.get(1), false);
+		checkLevelUpgraded(users.get(1), true);
 		
 	
 	}
