@@ -1,6 +1,7 @@
 package spring.co.kr.test;
 
-import java.lang.reflect.Proxy;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -8,22 +9,10 @@ import org.junit.Test;
 import org.springframework.aop.framework.ProxyFactoryBean;
 
 import spring.co.kr.interf.Hello;
-import spring.co.kr.proxy.UppercaseHandler;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class DynamicProxyTest {
 
-	@Test
-	public void simpleProxy() {
-		Hello proxiedHello = (Hello) Proxy.newProxyInstance(
-				getClass().getClassLoader(), 
-				new Class[] { Hello.class },
-				new UppercaseHandler(new HelloTarget())
-		);
 
-	}
-	
 	@Test
 	public void proxyFactoryBean() {
 		ProxyFactoryBean pfBean = new ProxyFactoryBean();
