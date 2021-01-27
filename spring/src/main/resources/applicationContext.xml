@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+		
+		
+	<!-- property -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value ="classpath:config.properties"/>
+		<property name="fileEncoding" value="UTF-8"/>
+	</bean>	
+		
+		
+	<bean id="dataSource" class ="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name ="driverClass" value = "oracle.jdbc.OracleDriver"/>
+		<property name ="url" value="jdbc:oracle:thin:@localhost:1521:orcl"/>
+		<property name ="username" value= "c##tlatmsrud"/>
+		<property name ="password" value ="tmdrud1203#"/>
+	</bean>
+	
+	
+	<!-- ref : setter -->
+	<bean id="userDao" class = "spring.co.kr.dao.UserDaoJdbc">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id = "transactionManager" class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+		
+	<!-- service -->
+	<bean id = "userService" class="spring.co.kr.service.UserServiceTx">
+		<property name="userService" ref="userServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	</bean>
+	
+	<bean id="userServiceImpl" class="spring.co.kr.service.UserServiceImpl">
+		<property name ="mailSender" ref="mailSender"/>
+		<property name ="userDao" ref="userDao"/>
+	</bean>
+	
+	<bean id="mailSender" class="spring.co.kr.service.DummyMailSender"/> 
+<!--  	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value= "${mail.smtp.host}"/>
+		<property name="defaultEncoding" value="${defaultEncoding}"/>
+		<property name="port" value="${mail.smtp.port}"/>
+		<property name="password" value="${password}"/>
+		<property name="username" value="${username}"/>
+		<property name="protocol" value="${protocol}"/>
+	    <property name="javaMailProperties">
+	        <props>
+	        	<prop key="mail.smtps.auth">${mail.smtp.auth}</prop>
+	        	<prop key="mail.debug">${mail.debug}</prop>
+	        	<prop key="mail.smtps.ssl.trust">${mail.smtp.auth}</prop>
+	        	<prop key="mail.smtps.ssl.enable">${mail.smtps.ssl.enable}</prop>
+	        </props>
+	    </property>
+	</bean>  -->
+	
+	
+	<!-- factory Bean -->	
+	<bean id="message" class="spring.co.kr.beans.MessageFactoryBean">
+		<property name="text" value="Factory Bean"/>
+	</bean>
+	
+	
+</beans>
