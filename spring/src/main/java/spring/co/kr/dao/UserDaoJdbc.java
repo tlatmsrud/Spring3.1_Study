@@ -12,28 +12,40 @@ import org.springframework.jdbc.core.RowMapper;
 
 import spring.co.kr.domain.Level;
 import spring.co.kr.interf.UserDao;
+import spring.co.kr.user.sqlService.SqlService;
 
 public class UserDaoJdbc implements UserDao{
 
 	private JdbcTemplate jdbcTemplate;
 	
 	private DataSource dataSource;
+
+	private SqlService sqlService;
 	
+	
+	
+	public void setSqlService(SqlService sqlService) {
+		this.sqlService = sqlService;
+	}
+
+
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		this.dataSource = dataSource;
 	}
 	
-	
+
+
 	public void add(User user) throws DuplicateKeyException{
-		jdbcTemplate.update("insert into users(id, name, password, lev, login, recommend, email) values(?,?,?,?,?,?,?)",
+		jdbcTemplate.update(
+				sqlService.getSql("userAdd"),
 				user.getId(),user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(),user.getEmail());
 		
 	}
 	
 	public User get(String id){
 		
-		return jdbcTemplate.queryForObject("select * from users where id = ?", 
+		return jdbcTemplate.queryForObject(sqlService.getSql("userGet"), 
 				new Object[] {id},
 				new RowMapper<User>() {
 					public User mapRow(ResultSet rs, int rowNum) throws SQLException{

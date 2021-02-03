@@ -61,20 +61,14 @@ public class UserDaoTest {
 	
 	}
 	
-	@Test
-	public void update() {
-		dao.deleteAll();
-		dao.add(user1);
-		
-		user1.setName("승경");
-		user1.setPassword("hi");
-		user1.setLevel(Level.GOLD);
-		user1.setLogin(1000);
-		user1.setRecommend(999);
-		
-		dao.update(user1);
-		User user1update = dao.get(user1.getId());
-		checkSameUser(user1, user1update);
-	}
+	/*
+	 * @Test public void update() { dao.deleteAll(); dao.add(user1);
+	 * 
+	 * user1.setName("승경"); user1.setPassword("hi"); user1.setLevel(Level.GOLD);
+	 * user1.setLogin(1000); user1.setRecommend(999);
+	 * 
+	 * dao.update(user1); User user1update = dao.get(user1.getId());
+	 * checkSameUser(user1, user1update); }
+	 */
 	
 }
