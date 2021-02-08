@@ -21,9 +21,7 @@ public class UserDaoJdbc implements UserDao{
 	private DataSource dataSource;
 
 	private SqlService sqlService;
-	
-	
-	
+
 	public void setSqlService(SqlService sqlService) {
 		this.sqlService = sqlService;
 	}
@@ -39,42 +37,39 @@ public class UserDaoJdbc implements UserDao{
 	public void add(User user) throws DuplicateKeyException{
 		jdbcTemplate.update(
 				sqlService.getSql("userAdd"),
-				user.getId(),user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(),user.getEmail());
+				user.getId(),user.getName(), user.getPassword(),user.getEmail() , user.getLevel().intValue(), user.getLogin(), user.getRecommend());
 		
 	}
 	
 	public User get(String id){
-		
-		return jdbcTemplate.queryForObject(sqlService.getSql("userGet"), 
-				new Object[] {id},
-				new RowMapper<User>() {
-					public User mapRow(ResultSet rs, int rowNum) throws SQLException{
-						User user = new User();
-						user.setId(rs.getString("id"));
-						user.setName(rs.getString("name"));
-						user.setPassword(rs.getString("password"));
-						user.setLevel(Level.valueOf(rs.getInt("lev")));
-						user.setLogin(rs.getInt("login"));
-						user.setRecommend(rs.getInt("recommend"));
-						user.setEmail(rs.getString("email"));
-						return user;
-					}
-				});
+		return jdbcTemplate.queryForObject(sqlService.getSql("userGet"), new Object[] {id}, new RowMapper<User>() {
+			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+				User user = new User();
+				user.setId(rs.getString("id"));
+				user.setName(rs.getString("name"));
+				user.setPassword(rs.getString("password"));
+				user.setLevel(Level.valueOf(rs.getInt("lev")));
+				user.setLogin(rs.getInt("login"));
+				user.setRecommend(rs.getInt("recommend"));
+				user.setEmail(rs.getString("email"));
+				return user;
+			}
+
+		});
 	}
 	
 	public void deleteAll(){
-		
-		jdbcTemplate.update("delete from users");
+		jdbcTemplate.update(sqlService.getSql("userDeleteAll"));
 	}
 	
 	public int getCount(){
-		return jdbcTemplate.queryForObject("select count(*) from users", int.class); 
+		return jdbcTemplate.queryForInt(sqlService.getSql("userGetCount")); 
 	}
 
 
 	public List<User> getAll() {
 		// TODO Auto-generated method stub
-		return jdbcTemplate.query("select * from users",
+		return jdbcTemplate.query(sqlService.getSql("userGetAll"),
 				new RowMapper<User>() {
 					public User mapRow(ResultSet rs, int rowNum) throws SQLException{
 						User user = new User();
@@ -93,11 +88,11 @@ public class UserDaoJdbc implements UserDao{
 
 	public void update(User user) {
 		// TODO Auto-generated method stub
-		this.jdbcTemplate.update(
-				"update users set name = ?, password = ?, lev = ?, login = ?, recommend = ?, email =? where id =?",
-				user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail(), user.getId());
+		this.jdbcTemplate.update(sqlService.getSql("userUpdate"),
+				user.getName(), user.getPassword(), user.getEmail(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getId());
 		
 	}
+	
 	
 
 }

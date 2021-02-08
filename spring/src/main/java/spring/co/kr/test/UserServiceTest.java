@@ -55,11 +55,11 @@ public class UserServiceTest {
 	public void setUp() {
 
 		users = Arrays.asList(
-				new User("sskssk","승경","p2",Level.BASIC,29,0,"tlatmsrud@naver.com"),
-				new User("sskssk1","승경","p2",Level.BASIC,50,0,"tlatmsrud@naver.com"),
-				new User("sskssk2","승경","p2",Level.SILVER,60,10-1,"tlatmsrud@naver.com"),
-				new User("sskssk3","승경","p2",Level.SILVER,60,30,"tlatmsrud@naver.com"),
-				new User("sskssk4","승경","p2",Level.GOLD,100,Integer.MAX_VALUE,"tlatmsrud@naver.com")
+				new User("sskssk","승경","p2","tlatmsrud@naver.com",Level.BASIC,29,0),
+				new User("sskssk1","승경","p2","tlatmsrud@naver.com",Level.BASIC,50,0),
+				new User("sskssk2","승경","p2","tlatmsrud@naver.com",Level.SILVER,60,10-1),
+				new User("sskssk3","승경","p2","tlatmsrud@naver.com",Level.SILVER,60,30),
+				new User("sskssk4","승경","p2","tlatmsrud@naver.com",Level.GOLD,100,Integer.MAX_VALUE)
 		);
 	}
 	

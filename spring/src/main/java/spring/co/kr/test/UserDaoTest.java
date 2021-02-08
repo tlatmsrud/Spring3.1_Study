@@ -3,7 +3,8 @@ package spring.co.kr.test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.After;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,19 +29,16 @@ public class UserDaoTest {
 	
 	@Before
 	public void setUp() {
-		this.user1 = new User("ssk","심승경","ispring",Level.BASIC, 1, 0,"tlatmsrud@naver.com");
-		this.user2 = new User("ssk2","심승경2","ispring2",Level.SILVER, 55, 10,"tlatmsrud@naver.com");
-		this.user3 = new User("ssk3","심승경2","ispring2",Level.GOLD, 100, 40,"tlatmsrud@naver.com");
-		
+		dao.deleteAll();
+		this.user1 = new User("ssk","심승경","ispring","tlatmsrud@naver.com", Level.BASIC, 11, 0);
+		this.user2 = new User("ssk2","심승경2","ispring2","tlatmsrud@naver.com",Level.SILVER, 55, 10);
+		this.user3 = new User("ssk3","심승경2","ispring2","tlatmsrud@naver.com",Level.GOLD, 100, 40);
+
 		dao.add(user1);
 		dao.add(user2);
 		dao.add(user3);
 	}
-	
-	@After
-	public void end() {
-		dao.deleteAll();
-	}
+
 	
 	private void checkSameUser(User user1, User user2) {
 		assertThat(user1.getId(), is(user2.getId()));
@@ -61,6 +59,27 @@ public class UserDaoTest {
 	
 	}
 	
+	@Test
+	public void getCount() {
+		assertThat(dao.getCount(), is(3));
+	}
+	
+	@Test
+	public void userGetAll() {
+		List<User> users = dao.getAll();
+		
+		for(User u : users) {
+			System.out.println(u.getId());
+		}
+	}
+	
+	@Test
+	public void userUpdate() {
+		user1.setName("update 심승경");
+		dao.update(user1);
+		System.out.println(dao.get(user1.getId()).getName());
+		assertThat(dao.get(user1.getId()).getName(), is(user1.getName()));
+	}
 	/*
 	 * @Test public void update() { dao.deleteAll(); dao.add(user1);
 	 * 
